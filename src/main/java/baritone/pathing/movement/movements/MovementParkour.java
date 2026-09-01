@@ -91,7 +91,7 @@ public class MovementParkour extends Movement {
             return;
         }
         BlockState standingOn = context.get(x, y - 1, z);
-        if (standingOn.getBlock() == Blocks.VINE || standingOn.getBlock() == Blocks.LADDER || standingOn.getBlock() instanceof StairBlock || MovementHelper.isBottomSlab(standingOn)) {
+        if (MovementHelper.isClimbable(standingOn.getBlock()) || standingOn.getBlock() instanceof StairBlock || MovementHelper.isBottomSlab(standingOn)) {
             return;
         }
         // we can't jump from (frozen) water with assumeWalkOnWater because we can't be sure it will be frozen
@@ -258,6 +258,9 @@ public class MovementParkour extends Movement {
             // we have fallen
             logDebug("sorry");
             return state.setStatus(MovementStatus.UNREACHABLE);
+        }
+        if (!MovementHelper.openDoors(ctx, state, src, src.relative(direction))) {
+            return state;
         }
         if (dist >= 4 || ascend) {
             state.setInput(Input.SPRINT, true);
